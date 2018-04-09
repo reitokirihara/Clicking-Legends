@@ -16,15 +16,15 @@ class ViewController: UIViewController {
     @IBOutlet var clickDamageLabel: UILabel!
     @IBOutlet var hireLegendOneButton: UIButton!
     
-    var hp: Float = 100
-    var maxHp: Float = 100
+    var hp: Float = 5
+    var maxHp: Float = 5
     var coins: Int = 0
     var clickDamage: Float = 1
     var rewardCoins: Int!
     var arenaNumber: Int = 1
 
     //variables for legend one
-    var priceForLegendOne: Int!
+    var priceForLegendOne: Int = 0
     var numberOfLegendOne: Int = 0
     
     override func viewDidLoad() {
@@ -59,7 +59,6 @@ class ViewController: UIViewController {
         if(numberOfLegendOne == 0) {
             priceForLegendOne = 5
             if(coins >= priceForLegendOne) {
-                
                 numberOfLegendOne += 1
                 coins -= 5
                 clickDamage += 1
