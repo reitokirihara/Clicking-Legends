@@ -17,6 +17,8 @@ class ViewController: UIViewController {
     @IBOutlet var clickDamageLabel: UILabel!
     @IBOutlet var damagePerSecondLabel: UILabel!
     @IBOutlet var enemyLevelLabel: UILabel!
+    @IBOutlet var enemyImage: UIImageView!
+    @IBOutlet var enemyImage2: UIImageView!
     
     //player
     @IBOutlet var playerLevelLabel: UILabel!
@@ -51,8 +53,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        maxEp = enemyLevel * 5
+        maxEp = enemyLevel * 20
         spawnNewEnemy(level: 1)
+        
+        enemyImage.loadGif(name: "rikuu-gif-for-project")
+        enemyImage2.loadGif(name: "ideal")
         
         playerLevelProgressBar.progress = 0
         
@@ -68,7 +73,7 @@ class ViewController: UIViewController {
         damagePerSecondLabel.sizeToFit()
         playerExperinceProgressLabel.sizeToFit()
         
-        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(automatedDamage), userInfo: nil, repeats: true)
+        Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(automatedDamage), userInfo: nil, repeats: true)
     }
 
     override func didReceiveMemoryWarning() {
@@ -124,10 +129,16 @@ class ViewController: UIViewController {
             extraEp = currentPlayerExperience - maxEp
             currentPlayerExperience = 0
             playerLevel += 1
+            maxEp = Float(playerLevel * 20)
             currentPlayerExperience += extraEp
+            playerLevelLabel.text = "\(playerLevel)"
         }
         playerLevelProgressBar.progress = currentPlayerExperience/maxEp
         playerExperinceProgressLabel.text = "\(currentPlayerExperience)/\(maxEp)"
+        playerExperinceProgressLabel.sizeToFit()
+        
+        enemyLevelLabel.text = "Enemy Level \(enemyLevel)"
+        enemyLevelLabel.sizeToFit()
     }
     
     func getRewardCoin(){
@@ -164,7 +175,7 @@ class ViewController: UIViewController {
    
     @objc
     func automatedDamage(_ timer: Timer){
-        damage(dmg: damagePerSecond)
+        damage(dmg: damagePerSecond/100)
     }
 }
 
