@@ -17,8 +17,6 @@ class ViewController: UIViewController {
     @IBOutlet var clickDamageLabel: UILabel!
     @IBOutlet var damagePerSecondLabel: UILabel!
     @IBOutlet var enemyLevelLabel: UILabel!
-    @IBOutlet var enemyImage: UIImageView!
-    @IBOutlet var enemyImage2: UIImageView!
     
     //player
     @IBOutlet var playerLevelLabel: UILabel!
@@ -55,9 +53,6 @@ class ViewController: UIViewController {
         
         maxEp = enemyLevel * 20
         spawnNewEnemy(level: 1)
-        
-        enemyImage.loadGif(name: "rikuu-gif-for-project")
-        enemyImage2.loadGif(name: "ideal")
         
         playerLevelProgressBar.progress = 0
         
