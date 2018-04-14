@@ -8,6 +8,7 @@
 
 import UIKit
 import Foundation
+import SpriteKit
 
 class ViewController: UIViewController {
 
@@ -21,11 +22,13 @@ class ViewController: UIViewController {
     //player
     @IBOutlet var playerLevelLabel: UILabel!
     @IBOutlet var playerExperinceProgressLabel: UILabel!
+    @IBOutlet var playerHpProgress: UIProgressView!
     @IBOutlet var playerLevelProgressBar: UIProgressView!
     
     //hire buttons
     @IBOutlet var hireLegendOneButton: UIButton!
     @IBOutlet var hireLegendTwoButton: UIButton!
+    @IBOutlet var skView:SKView!
     
     var hp: Float = 0
     var maxHp: Float = 0
@@ -33,9 +36,13 @@ class ViewController: UIViewController {
     var rewardCoins: Int!
     var enemyLevel: Float = 1.0
     var killedNumber: Float = 0
+    
     var playerLevel: Int = 1
     var rewardExperience: Float!
     var currentPlayerExperience: Float = 0
+    var playerHp: Float = 0
+    var maxPlayerHp: Float = 0
+    
     var maxEp: Float = 0
     var extraEp: Float!
     
@@ -47,10 +54,25 @@ class ViewController: UIViewController {
     var priceForLegendOne: Int = 5
     var priceForLegendTwo: Int = 25
     
+    private var dragon = SKSpriteNode()
+    private var dragonFlying: [SKTexture] = []
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
+        if let view = skView as? SKView {
+            //init SKScene
+            // Create the scene programmatically
+            view.ignoresSiblingOrder = true
+            view.showsFPS = true
+            view.showsNodeCount = true
+            //view.presentScene(SKScene)
+        }
+        
+        // Do any additional setup after loading the view, typically from a nib.
+        playerHp = 5 * Float(playerLevel)
+        maxPlayerHp = 5 * Float(playerLevel)
         maxEp = enemyLevel * 20
         spawnNewEnemy(level: 1)
         
@@ -69,6 +91,8 @@ class ViewController: UIViewController {
         playerExperinceProgressLabel.sizeToFit()
         
         Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(automatedDamage), userInfo: nil, repeats: true)
+        
+        Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(enemyAttack), userInfo: nil, repeats: true )
     }
 
     override func didReceiveMemoryWarning() {
@@ -127,6 +151,7 @@ class ViewController: UIViewController {
             maxEp = Float(playerLevel * 20)
             currentPlayerExperience += extraEp
             playerLevelLabel.text = "\(playerLevel)"
+            performSegue(withIdentifier: "levelUpSegue", sender: nil)
         }
         playerLevelProgressBar.progress = currentPlayerExperience/maxEp
         playerExperinceProgressLabel.text = "\(currentPlayerExperience)/\(maxEp)"
@@ -172,5 +197,39 @@ class ViewController: UIViewController {
     func automatedDamage(_ timer: Timer){
         damage(dmg: damagePerSecond/100)
     }
+    
+    @objc
+    func enemyAttack(){
+        playerHp -= enemyLevel * 5
+        playerHpProgress.progress = playerHp/maxPlayerHp
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "levelUpSegue" {
+            let controller = segue.destination as! LevelUpViewController
+            controller.level = playerLevel
+        }
+    }
+    
+    func buildDragon() {
+        let dragonAnimatedAtlas = SKTextureAtlas(named: "dragonImages")
+        var flyFrames: [SKTexture] = []
+        
+        for i in 4...6 {
+            let dragonTextureName = "tile\(i)"
+            flyFrames.append(dragonAnimatedAtlas.textureNamed(dragonTextureName))
+        }
+        dragonFlying = flyFrames
+        
+        let firstFrameTexture = dragonFlying[0]
+        dragon = SKSpriteNode(texture: firstFrameTexture)
+        dragon.position = CGPoint(x: 100, y: 100)
+        skView.scene?.addChild(dragon)
+    }
+    func animateDragon() {
+        dragon.run(<#T##action: SKAction##SKAction#>, withKey: <#T##String#>)
+    }
+
 }
+
 

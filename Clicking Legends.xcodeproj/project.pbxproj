@@ -12,6 +12,8 @@
 		2630C16C207AC1DB008D89F5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2630C16A207AC1DB008D89F5 /* Main.storyboard */; };
 		2630C16E207AC1DB008D89F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2630C16D207AC1DB008D89F5 /* Assets.xcassets */; };
 		2630C171207AC1DB008D89F5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2630C16F207AC1DB008D89F5 /* LaunchScreen.storyboard */; };
+		AD78A68620828480000AA11E /* LevelUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78A68520828480000AA11E /* LevelUpViewController.swift */; };
+		AD78A68A20828FCE000AA11E /* dragonImages.atlas in Resources */ = {isa = PBXBuildFile; fileRef = AD78A68920828FCE000AA11E /* dragonImages.atlas */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		2630C16D207AC1DB008D89F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2630C170207AC1DB008D89F5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2630C172207AC1DB008D89F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AD78A68520828480000AA11E /* LevelUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelUpViewController.swift; sourceTree = "<group>"; };
+		AD78A68920828FCE000AA11E /* dragonImages.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = dragonImages.atlas; path = ../../../Downloads/dragonImages.atlas; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,8 @@
 			children = (
 				2630C166207AC1DB008D89F5 /* AppDelegate.swift */,
 				2630C168207AC1DB008D89F5 /* ViewController.swift */,
+				AD78A68920828FCE000AA11E /* dragonImages.atlas */,
+				AD78A68520828480000AA11E /* LevelUpViewController.swift */,
 				2630C16A207AC1DB008D89F5 /* Main.storyboard */,
 				2630C16D207AC1DB008D89F5 /* Assets.xcassets */,
 				2630C16F207AC1DB008D89F5 /* LaunchScreen.storyboard */,
@@ -125,6 +131,7 @@
 			files = (
 				2630C171207AC1DB008D89F5 /* LaunchScreen.storyboard in Resources */,
 				2630C16E207AC1DB008D89F5 /* Assets.xcassets in Resources */,
+				AD78A68A20828FCE000AA11E /* dragonImages.atlas in Resources */,
 				2630C16C207AC1DB008D89F5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -138,6 +145,7 @@
 			files = (
 				2630C169207AC1DB008D89F5 /* ViewController.swift in Sources */,
 				2630C167207AC1DB008D89F5 /* AppDelegate.swift in Sources */,
+				AD78A68620828480000AA11E /* LevelUpViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
