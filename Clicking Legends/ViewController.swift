@@ -8,7 +8,6 @@
 
 import UIKit
 import Foundation
-import SpriteKit
 
 class ViewController: UIViewController {
 
@@ -18,6 +17,8 @@ class ViewController: UIViewController {
     @IBOutlet var clickDamageLabel: UILabel!
     @IBOutlet var damagePerSecondLabel: UILabel!
     @IBOutlet var enemyLevelLabel: UILabel!
+    @IBOutlet var potionsLeftLabel: UILabel!
+    @IBOutlet var enemyButton: UIButton!
     
     //player
     @IBOutlet var playerLevelLabel: UILabel!
@@ -28,7 +29,6 @@ class ViewController: UIViewController {
     //hire buttons
     @IBOutlet var hireLegendOneButton: UIButton!
     @IBOutlet var hireLegendTwoButton: UIButton!
-    @IBOutlet var skView:SKView!
     
     var hp: Float = 0
     var maxHp: Float = 0
@@ -36,6 +36,10 @@ class ViewController: UIViewController {
     var rewardCoins: Int!
     var enemyLevel: Float = 1.0
     var killedNumber: Float = 0
+    var potions: Float = 0
+    var priceOfPotion: Int = 10
+    var numberOfPotions: Float = 0
+    var autoClickCount: Int = 0
     
     var playerLevel: Int = 1
     var rewardExperience: Float!
@@ -53,22 +57,9 @@ class ViewController: UIViewController {
     //price for legends
     var priceForLegendOne: Int = 5
     var priceForLegendTwo: Int = 25
-    
-    private var dragon = SKSpriteNode()
-    private var dragonFlying: [SKTexture] = []
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let view = skView as? SKView {
-            //init SKScene
-            // Create the scene programmatically
-            view.ignoresSiblingOrder = true
-            view.showsFPS = true
-            view.showsNodeCount = true
-            //view.presentScene(SKScene)
-        }
         
         // Do any additional setup after loading the view, typically from a nib.
         playerHp = 5 * Float(playerLevel)
@@ -92,7 +83,7 @@ class ViewController: UIViewController {
         
         Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(automatedDamage), userInfo: nil, repeats: true)
         
-        Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(enemyAttack), userInfo: nil, repeats: true )
+        Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(enemyAttack), userInfo: nil, repeats: true )
     }
 
     override func didReceiveMemoryWarning() {
@@ -102,6 +93,7 @@ class ViewController: UIViewController {
 
     @IBAction func tapEnemy(_ sender: AnyObject) {
         damage(dmg: clickDamage)
+        enemyButton.setImage(UIImage(named: "enemyHit"), for: .highlighted)
     }
     
     @IBAction func hireLegendOne(_ sender: AnyObject) {
@@ -139,10 +131,38 @@ class ViewController: UIViewController {
         changeCoinLabel()
     }
     
+    @IBAction func buyPotion(_ sender: AnyObject){
+        if(coins >= priceOfPotion) {
+            coins -= priceOfPotion
+            coinLabel.text = "💰 \(coins)"
+            coinLabel.sizeToFit()
+            
+            numberOfPotions += 1
+            
+            potionsLeftLabel.text = "Potions Left: \(numberOfPotions)"
+            potionsLeftLabel.sizeToFit()
+        }
+    }
+    
+    @IBAction func usePotion(_ sender: AnyObject){
+        if(numberOfPotions > 0) {
+            activatePotion()
+        }
+    }
+    
+    @IBAction func automaticClick(_ sender: Any) {
+        if(autoClickCount == 0) {
+            Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(tapDamage), userInfo: nil, repeats: true)
+            autoClickCount += 1
+        } else {
+            return
+        }
+    }
+    
     func spawnNewEnemy(level: Float){
-        hp = level * 5
+        hp = (level - level/2) * pow(level, 3)
         maxHp = hp
-        rewardExperience = enemyLevel
+        rewardExperience = round(enemyLevel/2)
         currentPlayerExperience += rewardExperience
         if(currentPlayerExperience >= maxEp) {
             extraEp = currentPlayerExperience - maxEp
@@ -151,6 +171,9 @@ class ViewController: UIViewController {
             maxEp = Float(playerLevel * 20)
             currentPlayerExperience += extraEp
             playerLevelLabel.text = "\(playerLevel)"
+            maxPlayerHp = 25 * Float(playerLevel)
+            playerHp = maxPlayerHp
+            playerHpProgress.progress = playerHp/maxPlayerHp
             performSegue(withIdentifier: "levelUpSegue", sender: nil)
         }
         playerLevelProgressBar.progress = currentPlayerExperience/maxEp
@@ -162,7 +185,7 @@ class ViewController: UIViewController {
     }
     
     func getRewardCoin(){
-        rewardCoins = Int(enemyLevel)
+        rewardCoins = Int(enemyLevel/3) * Int(pow(enemyLevel, 2))
         coins += rewardCoins
         coinLabel.text = "💰 \(coins)"
         coinLabel.sizeToFit()
@@ -199,37 +222,36 @@ class ViewController: UIViewController {
     }
     
     @objc
+    func tapDamage(_ timer: Timer){
+        damage(dmg: clickDamage)
+    }
+    
+    @objc
     func enemyAttack(){
-        playerHp -= enemyLevel * 5
+        playerHp -= round(enemyLevel/2)
         playerHpProgress.progress = playerHp/maxPlayerHp
+        if(playerHp <= 0) {
+            performSegue(withIdentifier: "gameOverSegue", sender: nil)
+        }
+    }
+    
+    func activatePotion(){
+        playerHp = maxPlayerHp
+        playerHpProgress.progress = playerHp/maxPlayerHp
+        
+        numberOfPotions -= 1
+        potionsLeftLabel.text = "Potions Left \(numberOfPotions)"
+        potionsLeftLabel.sizeToFit()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "levelUpSegue" {
             let controller = segue.destination as! LevelUpViewController
             controller.level = playerLevel
+        } else if segue.identifier == "gameOverSegue" {
+            let controller = segue.destination as! GameOverViewController
         }
     }
-    
-    func buildDragon() {
-        let dragonAnimatedAtlas = SKTextureAtlas(named: "dragonImages")
-        var flyFrames: [SKTexture] = []
-        
-        for i in 4...6 {
-            let dragonTextureName = "tile\(i)"
-            flyFrames.append(dragonAnimatedAtlas.textureNamed(dragonTextureName))
-        }
-        dragonFlying = flyFrames
-        
-        let firstFrameTexture = dragonFlying[0]
-        dragon = SKSpriteNode(texture: firstFrameTexture)
-        dragon.position = CGPoint(x: 100, y: 100)
-        skView.scene?.addChild(dragon)
-    }
-    func animateDragon() {
-        dragon.run(<#T##action: SKAction##SKAction#>, withKey: <#T##String#>)
-    }
-
 }
 
 
